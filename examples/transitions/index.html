@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv='Content-type' content='text/html; charset=utf-8'>
+    <title>Example with Transitions</title>
+    <link rel="stylesheet" href="../shared/css/base.css" />
+    <link rel="stylesheet" href="transition.css" />
+  </head>
+  <body>
+    <h1>Example with Transitions</h1>
+    <div id = "container"></div>
+
+
+    <script src="../shared/thirdparty/es5-shim.min.js"></script>
+    <script src="../shared/thirdparty/es5-sham.min.js"></script>
+    <script src="../shared/thirdparty/console-polyfill.js"></script>
+    <script src="../../build/react-with-addons.js"></script>
+    <script src="../../build/JSXTransformer.js"></script>
+    <script type="text/jsx">
+      var CSSTransitionGroup = React.addons.CSSTransitionGroup;
+      var INTERVAL = 500;
+
+      var AnimateDemo = React.createClass({
+        getInitialState: function() {
+          return {start: 0};
+        },
+
+        componentDidMount: function() {
+          this.interval = setInterval(this.tick, INTERVAL);
+        },
+
+        componentWillUnmount: function() {
+          clearInterval(this.interval);
+        },
+
+        tick: function() {
+          this.setState({start: this.state.start + 1});
+        },
+
+        render: function() {
+          var children = [];
+          var pos = 0;
+          var colors = ['red', 'gray', 'blue', 'yellow' , 'black','pink','skyblue'];
+          var colorPivot = parseInt(this.props.colorPivot) || 0;
+          for (var i = this.state.start; i < this.state.start + colors.length * 2; i++) {
+            var style = {
+              left: pos * 128,
+              background: colors[(i+ colorPivot) % colors.length ]
+            };
+            pos++;
+            children.push(<div key={i} className="animateItem" style={style}>{i}</div>);
+          }
+          return (
+            <div className="example">
+              <CSSTransitionGroup
+                className="animateExample"
+                transitionName="example">
+                {children}
+              </CSSTransitionGroup>
+              <CSSTransitionGroup
+                className="animateExample"
+                transitionName="example">
+                {children}
+               </CSSTransitionGroup>
+              </div>
+          );
+        }
+      });
+
+
+      var i = 1, MAX = 20;
+
+      for (; i < MAX; i++) {
+        var doc = document.createElement("div");
+        doc.setAttribute("id", 'container'+i );
+        document.body.appendChild(doc);
+        React.render(
+                <AnimateDemo colorPivot = {i}/>,
+                document.getElementById('container'+i)
+        );
+      }
+
+    </script>
+  </body>
+</html>
